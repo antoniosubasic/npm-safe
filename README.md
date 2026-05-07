@@ -1,6 +1,6 @@
 # Sandboxed NPM Package Installer
 
-A simple container for auditing and installing NPM packages in a sandboxed environment.
+A simple container for auditing and installing NPM packages in a sandboxed environment, using Google's [OSV-Scanner](https://github.com/google/osv-scanner) for CVE checks against the [OSV.dev](https://osv.dev) database (no API key required).
 
 Run the container in your project:
 

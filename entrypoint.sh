@@ -7,17 +7,18 @@ case "$1" in
     npm install --dry-run 2>/dev/null || true
 
     echo ""
-    echo "=== Security audit ==="
-    npm audit --audit-level=none || true
+    if [ ! -f ./package-lock.json ]; then
+      echo "No lockfile found, generating one first..."
+      npm install --package-lock-only --ignore-scripts
+    fi
+
+    echo ""
+    echo "=== OSV vulnerability scan ==="
+    osv-scanner scan source -L package-lock.json || true
 
     echo ""
     echo "=== Packages with install scripts (postinstall hooks) ==="
     node -e "
-      const fs = require('fs');
-      if (!fs.existsSync('./package-lock.json')) {
-        console.log('No lockfile found, generating one first...');
-        require('child_process').execSync('npm install --package-lock-only --ignore-scripts', {stdio: 'inherit'});
-      }
       const lock = require('./package-lock.json');
       const pkgs = lock.packages || {};
       const risky = Object.entries(pkgs)
