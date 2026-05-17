@@ -37,8 +37,14 @@ case "$1" in
     ;;
 
   install|i)
-    echo "=== Installing (scripts disabled) ==="
-    npm ci --ignore-scripts --no-audit --before "$CUTOFF"
+    shift
+    if [ "$#" -eq 0 ]; then
+      echo "=== Installing from lockfile (scripts disabled) ==="
+      npm ci --ignore-scripts --no-audit --before "$CUTOFF"
+    else
+      echo "=== Installing $* (scripts disabled) ==="
+      npm install "$@" --ignore-scripts --no-audit --save --before "$CUTOFF"
+    fi
     echo "=== Done ==="
     ;;
 
