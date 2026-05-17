@@ -1,15 +1,17 @@
 #!/bin/sh
 set -e
 
+CUTOFF="$(date -u -d '7 days ago' '+%Y-%m-%dT%H:%M:%SZ')"
+
 case "$1" in
   audit|a)
     echo "=== Dry run: packages that would be installed ==="
-    npm install --dry-run 2>/dev/null || true
+    npm install --dry-run --before "$CUTOFF" 2>/dev/null || true
 
     echo ""
     if [ ! -f ./package-lock.json ]; then
       echo "No lockfile found, generating one first..."
-      npm install --package-lock-only --ignore-scripts
+      npm install --package-lock-only --ignore-scripts --before "$CUTOFF"
     fi
 
     echo ""
@@ -36,7 +38,7 @@ case "$1" in
 
   install|i)
     echo "=== Installing (scripts disabled) ==="
-    npm ci --ignore-scripts --no-audit
+    npm ci --ignore-scripts --no-audit --before "$CUTOFF"
     echo "=== Done ==="
     ;;
 
