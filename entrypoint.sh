@@ -1,7 +1,10 @@
 #!/bin/sh
 set -e
 
-CUTOFF="$(date -u -d '7 days ago' '+%Y-%m-%dT%H:%M:%SZ')"
+# Alpine's BusyBox date lacks GNU relative-date parsing (-d '7 days ago'),
+# so compute the cutoff from the epoch (7 days = 604800s). The @epoch form
+# is understood by both BusyBox and GNU date.
+CUTOFF="$(date -u -d "@$(( $(date -u +%s) - 7 * 24 * 60 * 60 ))" '+%Y-%m-%dT%H:%M:%SZ')"
 
 case "$1" in
   audit|a)
